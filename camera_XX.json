@@ -1,0 +1,40 @@
+{
+    "<name placeholder>": [
+        {
+            "name"          : "<name placeholder>",
+            "type"          : "camera",
+            "resolution"    : [640, 480],
+
+            "target"        : ["FPGA"] 
+
+
+        }
+    ],
+
+    "Blender": [
+        {
+            "input_path"    : "<input_path placeholder>",
+
+            "resolution"    : [640, 480],
+            "frame"         : 10,
+            "color_mode"    : "BW",
+            "fps"           : 30,
+            
+            "camera"        : "<name placeholder>",
+            "position"      : [0, 0, 0.3],
+            "rotation"      : [0, 0, 0],
+            
+            "output_folder" : "<output_folder placeholder>"
+        }
+    ],
+
+    "ModelSim": [
+        {
+            "modelsim_path" : "<modelsim_path placeholder>",
+            "input_folder"  : "<input_folder placeholder>"
+        }
+    ]
+
+    
+
+}
