@@ -1,0 +1,1 @@
+-gIMG_FILENAME_IN=output/Caméra_01/1_sim.hex -gIMG_FILENAME_OUT=output/Caméra_01/1_sim_out.hex 
