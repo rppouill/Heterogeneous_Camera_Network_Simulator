@@ -1,11 +1,12 @@
 {
-    "<name placeholder>": [
+    "Camera": [
         {
-            "name"          : "<name placeholder>",
-            "type"          : "camera",
-            "resolution"    : [640, 480],
+            "name"              : "<name placeholder>",
+            "type"              : "camera",
+            "resolution"        : [640, 480],
+            "camera_folder" :   "<camera_foder placeholder>",
+            "target"            : ["FPGA"] 
 
-            "target"        : ["FPGA"] 
 
 
         }
