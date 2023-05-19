@@ -12,8 +12,8 @@ class Blender_Render():
     def __init__(self, input_environment, output_folder,params, scenario = None, camera_Name = None) -> None:
         
 
-        log.debug("Blender_Render.__init__")
-        log.debug(f"input_environment: {input_environment}")
+        print("Blender_Render.__init__")
+        print(f"input_environment: {input_environment}")
         
         # Import the blender file
         self.imported_object = bpy.ops.wm.open_mainfile(filepath=input_environment)
@@ -27,42 +27,34 @@ class Blender_Render():
         self.scene.render.resolution_y = params["resolution_y"]
         self.scene.render.image_settings.color_mode = params["color_mode"]
 
-        log.debug(f"camera_Name: {camera_Name}")
-        log.debug(f"frame_end: {self.scene.frame_end}")
-        log.debug(f"fps: {self.scene.render.fps}")
-        log.debug(f"resolution_x: {self.scene.render.resolution_x}")
-        log.debug(f"resolution_y: {self.scene.render.resolution_y}")
-        log.debug(f"color_mode: {self.scene.render.image_settings.color_mode}")
+        print(f"camera_Name: {camera_Name}")
+        print(f"frame_end: {self.scene.frame_end}")
+        print(f"fps: {self.scene.render.fps}")
+        print(f"resolution_x: {self.scene.render.resolution_x}")
+        print(f"resolution_y: {self.scene.render.resolution_y}")
+        print(f"color_mode: {self.scene.render.image_settings.color_mode}")
 
 
         
         self.camera = bpy.data.objects.get(camera_Name)
         self.other_object = [ob.name for ob in self.scene.objects if ob.type != 'CAMERA']
         self.scenario = scenario if scenario is not None else self.scenario
+        print(f"Camera Name: {camera_Name}")
+        print(f"Camera: {self.camera}")
         self.camera_position = (bpy.data.objects[self.camera.name].location.x, bpy.data.objects[self.camera.name].location.y, bpy.data.objects[self.camera.name].location.z)
 
         # Set the occulusion test parameters
-        res_ratio = 0.25
+        res_ratio = 1
         self.res_x = int(self.context.scene.render.resolution_x * res_ratio)
         self.res_y = int(self.context.scene.render.resolution_y * res_ratio)
 
 
 
-        # Set the output folder for the bpy verbosity
-        logfile = os.path.join(output_folder, "blender.log")
-        open(logfile, 'a').close()
-        old = os.dup(sys.stdout.fileno())
-        sys.stdout.flush()
-        os.close(sys.stdout.fileno())
-        fd = os.open(logfile, os.O_WRONLY)
 
-        self.logfile = logfile
-        self.old = old
-        self.fd = fd
 
     def scenario(self):
         pass
-    def occlusion_test(self,depsgraph, camera, resolution_x, resolution_y):
+    def occlusion_test(self,depsgraph, camera, resolution_x, resolution_y, exclude=[]):
         # get vectors which define view frustum of camera
         top_right, _, bottom_left, top_left = camera.data.view_frame(scene=self.scene)
 
@@ -89,7 +81,7 @@ class Blender_Render():
                 is_hit, _, _, _, hit_obj, _ = self.scene.ray_cast(depsgraph, camera_translation, pixel_vector)
 
                 if is_hit:
-                    if hit_obj.name not in ['Sol'] and hit_obj.name not in ['Plafond'] and hit_obj.name not in ['Mur']: 
+                    if hit_obj.name not in exclude:
                         hit_data.add(hit_obj.name)
 
         return hit_data
@@ -97,31 +89,35 @@ class Blender_Render():
         return np.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2  + (p0[2] - p1[2])**2)
     
     def render_image(self, frame, distance, filepath = './output', processing = None):
-
-
         self.scene.frame_set(frame)
         self.scene.render.filepath = f'./{filepath}/{frame}.png'
-
-        visible_objects = self.occlusion_test(self.context.evaluated_depsgraph_get(), self.camera, self.res_x, self.res_y)
-
+        render_filepath = self.scene.render.filepath
+        print(f"Render frame {frame}")
+        visible_objects = self.occlusion_test(self.context.evaluated_depsgraph_get(), 
+                                              self.camera, self.res_x, self.res_y,
+                                              exclude= ['Sol','Mur','Plafond'])
+        print(f"visible_objects: {visible_objects}")
+        print(f"Len visible_objects: {len(visible_objects)}")
         if len(visible_objects) > 0:
             bpy.context.scene.camera = self.camera
             buff_distance = np.Infinity
             
-            log.debug(f"{self.camera.name} visible_objects: {visible_objects}")
+            print(f"{self.camera.name} visible_objects: {visible_objects}")
             for visible_object in visible_objects:
                 start = (bpy.data.objects[visible_object].location.x, bpy.data.objects[visible_object].location.y, bpy.data.objects[visible_object].location.z)
                 buff_distance = self.getDistance(start, self.camera_position) if buff_distance > self.getDistance(start, self.camera_position) else buff_distance
-                log.debug(f"{self.camera.name} start: {start}")
+                print(f"{self.camera.name} start: {start}")
             
             distance[frame-1] = buff_distance
             bpy.ops.render.render(write_still=True) 
         else:
-            log.debug("No visible object")
+            render_filepath = None
+            print("No visible object")
             distance[frame-1] = 0 
 
-        log.debug(f"{self.camera.name} distance: {distance[frame-1]}")
-
+        print(f"{self.camera.name} distance: {distance[frame-1]}")
+        return render_filepath
+    
     def render_animation(self, filepath = './output'):
         self.scene.render.image_settings.file_format = 'FFMPEG'
         self.scene.render.ffmpeg.format = 'MPEG4'
@@ -133,12 +129,7 @@ class Blender_Render():
             self.scene.render.filepath = f'./{filepath}/{camera.name}.mp4'
             bpy.ops.render.render(animation=True)
 
-    #Destcutor
-    def __del__(self):
-        log.debug("Destructor called")
-        os.close(self.fd)
-        os.dup(self.old)
-        os.close(self.old)
+
 
 def scenario(end_frame):
     from numpy import floor
@@ -177,9 +168,6 @@ def scenario(end_frame):
     obj['cone'][0].location = (0.3,0,0.3)
     cube.location = (9,8,0.3)
     update(obj,frame = end_frame)
-
-def getDistance(p0, p1):
-    return np.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2  + (p0[2] - p1[2])**2)
 
 def test_Blender_Render(input_environment,frame,output):
 
