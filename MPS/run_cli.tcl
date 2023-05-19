@@ -3,19 +3,19 @@
 # TODO
 proc compile_design {} {
   puts " \t >> Compiling project files ..."
-  vlib work
-  vmap work work
-  vcom -2008 -work work ./ModelSim/test.vhd
-  vcom -2008 -work work ./ModelSim/testbench.vhd
+  vlib -unix <work placeholder>/work
+  vmap <work placeholder>/work
+  vcom -2008 -work <work placeholder>/work /home/ropouillard/Documents/Thesis_Working/Simulateur/Frist/MPS/test.vhd
+  vcom -2008 -work <work placeholder>/work /home/ropouillard/Documents/Thesis_Working/Simulateur/Frist/MPS/testbench.vhd
 }
 
 proc sim_design {} {
   puts " \t >> Performing RTL Sim ..."
   #vsim work.testbench
-  vsim -f args.txt work.testbench
+  vsim -f <args placeholder> <work placeholder>/work.testbench
   vcd file results.vcd
   vcd add -r *
-  run 20 ms
+  run 5 ms
 }
 
 proc exit_sim  {} {
@@ -23,6 +23,7 @@ proc exit_sim  {} {
 }
 
 proc all {} {
+  puts " \t >> Running all steps ..."
   compile_design
   sim_design
   exit_sim
