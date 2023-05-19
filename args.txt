@@ -1,1 +1,0 @@
--gIMG_FILENAME_IN=./output/Caméra_01/hex/2.hex -gIMG_FILENAME_OUT=./output/Caméra_01/out_hex/2.hex 
