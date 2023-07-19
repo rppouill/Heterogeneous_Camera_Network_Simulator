@@ -4,6 +4,12 @@
 # 1. Run the simulation
 # 2. Edit script VMs
 
+
+# 1.1 run.sh -s elbow_corridor 2
+# 1.2 run.sh -s square 4
+
+# 2. run.sh -e ./Processing/CPU/qemu_files/2017-11-29-raspbian-stretch-lite.img ./Processing/CPU/qemu_files/kernel-qemu-4.14.79-stretch ./Processing/CPU/qemu_files/versatile-pb.dtb
+
 while [[ $# -gt 0 ]]; do
   case $1 in
     -s|--simulation)
