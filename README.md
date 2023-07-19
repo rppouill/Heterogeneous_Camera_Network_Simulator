@@ -2,25 +2,18 @@
 
 
 ### To Do
-- [x] Blender Processing
+- [x] Image Generator
+  - [x] Blender
+  - [ ] ~~Unity~~
 - [ ] FPGA
   - [x]  Processing
   - [ ]  Profiler
 - [ ] CPU
-  - [ ] Processing
+  - [x] Processing
   - [ ] Network Layer 
   - [ ] Profiler
 - [ ] GPU 
   - [ ] Processing
   - [ ] Profiler
 
-
-### Requires
-* OpenMPI
-* bpy
-* numpy 
-* matplotlib
-* pylab
-* PIL
-* re
-
+ - Create Simulator.py File to instanciate multiple camera (with MPI or not)

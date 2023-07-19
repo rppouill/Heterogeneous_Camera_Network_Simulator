@@ -79,7 +79,8 @@ def Square(end_frame):
     update(obj,frame = end_frame)
 
 from enum import Enum
+from functools import partial
 
 class Scenario(Enum):        
-    ELBOW_CORRIDOR = Elbow_Corridor
-    SQUARE = Square
+    ELBOW_CORRIDOR = partial(Elbow_Corridor)
+    SQUARE = partial(Square)

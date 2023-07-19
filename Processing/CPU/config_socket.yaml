@@ -1,0 +1,48 @@
+qemu:
+  system: arm
+config:
+  append: "root=/dev/sda2 panic=1"
+  cpu: arm1176
+  machine: versatilepb
+  m: 256
+  no-reboot:
+  dtb: <dtb placeholder> 
+  kernel: <kernel placeholder> 
+  drive_xx:
+    - file: <drive placeholder> 
+      format: raw
+
+  #net: nic
+  #net_xx:
+  #  - user:
+  #    hostfwd: tcp::5022-:22
+  
+  chardev_00: 
+    - socket:
+      path: <host2guest placeholder>
+      server: 'on'
+      wait: 'off'
+      id: <host2guest_id placeholder>
+
+  chardev_01: 
+    - socket:
+      path: <guest2host placeholder>
+      id: <guest2host_id placeholder>
+      
+  device: virtio-serial
+  device_00:
+    - virtserialport:
+      chardev: <host2guest_id placeholder>
+      id: socket1
+      nr: 1
+
+  device_01:
+    - virtserialport:
+      chardev: <guest2host_id placeholder>
+      id: socket2
+      nr: 2
+plugins: {} 
+
+
+
+

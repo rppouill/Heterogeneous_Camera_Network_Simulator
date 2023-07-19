@@ -3,8 +3,8 @@
         {
             "name"              : "<name placeholder>",
             "type"              : "camera",
-            "resolution"        : [640, 480],
-            "camera_folder" :   "<camera_foder placeholder>",
+            "resolution"        : [30, 30],
+            "camera_folder" :   "<camera_folder placeholder>",
             "target"            : ["FPGA"] 
 
 
@@ -14,9 +14,9 @@
 
     "Blender": [
         {
-            "input_path"    : "<input_path placeholder>",
+            "input_path"    : "<input_blender placeholder>",
 
-            "resolution"    : [640, 480],
+            "resolution"    : [30, 30],
             "frame"         : 10,
             "color_mode"    : "BW",
             "fps"           : 30,
@@ -25,14 +25,30 @@
             "position"      : [0, 0, 0.3],
             "rotation"      : [0, 0, 0],
             
-            "output_folder" : "<output_folder placeholder>"
+            "output_folder" : "<output_blender placeholder>"
         }
     ],
 
     "ModelSim": [
         {
             "modelsim_path" : "<modelsim_path placeholder>",
-            "input_folder"  : "<input_folder placeholder>"
+            "input_folder"  : "<input_fpga placeholder>",
+            "output_folder" : "<output_fpga placeholder>"
+        }
+    ],
+
+    "CPU": [
+        {
+            "QEMU_Config"   : "<QEMU_Config placeholder>",
+            "input_folder"  : "<input_cpu placeholder>",
+
+            "dtb"           :  "<dtb placeholder>",
+            "kernel"        :  "<kernel placeholder>",
+            "drive"         :  "<drive placeholder>",
+
+            "host2guest"    :  "<host2guest placeholder>",
+            "guest2host"    :  "<guest2host placeholder>"
+
         }
     ]
 

@@ -1,0 +1,57 @@
+qemu:
+  system: arm
+config:
+  append: "root=/dev/sda2 panic=1"
+  cpu: arm1176
+  machine: versatilepb
+  m: 256
+  no-reboot:
+  dtb: ./qemu_files/versatile-pb.dtb
+  kernel: ./qemu_files/kernel-qemu-4.14.79-stretch
+  drive_xx:
+    - file: ./qemu_files/2017-11-29-raspbian-stretch-lite_2.img
+      format: raw
+    
+  device: virtio-serial-pci
+
+#Reader
+  chardev_00: 
+    - pipe:
+      id: ch0
+      path: serial0
+  device_00: 
+    - virtserialport:
+      chardev: ch0
+      name: serial0
+#Writer 
+  chardev_01: 
+    - pipe:
+      id: ch1
+      path: serial1
+  device_01: 
+    - virtserialport:
+      chardev: ch1
+      name: serial1
+
+  #device_02:
+  #  - driver: virtio-net
+  #    netdev: network
+  #netdevsss:
+  #  - driver: tap
+  #    id: network
+  qmp:
+    _value: unix:/tmp/qmp-qxl.socket
+    server:
+    nowait:
+  net: nic
+  netsss: 
+    - user:
+      hostfwd: tcp::5022-:22
+plugins: 
+  qmp:
+    address: /tmp/qmp-qxl.socket
+
+
+
+
+
